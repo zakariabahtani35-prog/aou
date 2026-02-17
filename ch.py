@@ -1,12 +1,13 @@
 import pandas as pd
 
-# ÉTAPE 1 — Nettoyage & Préparation
+# ÉTAPE 1
 
-df = pd.read_excel('ed.xlsx')
+df = pd.read_excel('aa.xlsx')
 
 df.columns = (
     df.columns.str.strip().str.lower()
-    .str.replace(" ", "_")
+    .str.replace(" ", "_") 
+
     .str.replace("é","e")
     .str.replace("è","e")
     .str.replace("ê","e")
@@ -31,14 +32,14 @@ for col in cols_finance:
 df = df.dropna(subset=['date_reglement','montant_rgl'])
 df = df.drop_duplicates()
 
-# ÉTAPE 2 — Analyse des tendances
+# ÉTAPE 2
 
 ca_journalier = df.groupby('jour')['montant_rgl'].sum()
 ca_hebdomadaire = df.groupby('semaine')['montant_rgl'].sum()
 ca_mensuel = df.groupby('mois')['montant_rgl'].sum()
 solde_moyen_journalier = df.groupby('jour')['solde_cpp'].mean()
 
-# ÉTAPE 3 — Clients clés
+# ÉTAPE 3
 
 clients_top = (
     df.groupby('id_client')
@@ -50,26 +51,22 @@ clients_top = (
       .sort_values(by='total_depense', ascending=False)
       .head(10)
 )
-
 clients_impayes = (
     df.groupby('id_client')['montant_rst']
       .sum()
-      .reset_index()
 )
 
-clients_impayes = clients_impayes[clients_impayes['montant_rst'] > 0]
-# ÉTAPE 4 — Restaurants & Heures de pointe
-
+clients_impayes = clients_impayes[clients_impayes > 0]
 
 ca_restaurant = (
     df.groupby('restaurant')['montant_rgl']
       .sum()
       .sort_values(ascending=False)
 )
-
+print('hghuuiepvi hvyr', ca_restaurant)
 transactions_par_heure = df.groupby('heure')['montant_rgl'].count()
 
-# ÉTAPE 5 — Détection des anomalies (IQR)
+# ÉTAPE 5
 
 Q1 = df['montant_rgl'].quantile(0.25)
 Q3 = df['montant_rgl'].quantile(0.75)
@@ -87,7 +84,7 @@ anomalies_client = anomalies.groupby('id_client')['montant_rgl'].count()
 anomalies_restaurant = anomalies.groupby('restaurant')['montant_rgl'].count()
 anomalies_heure = anomalies.groupby('heure')['montant_rgl'].count()
 
-# ÉTAPE 6 — Performance des caissiers
+# ÉTAPE 6
 
 performance_caissiers = (
     df.groupby('id_user')
@@ -98,11 +95,11 @@ performance_caissiers = (
       .sort_values(by='montant_total', ascending=False)
 )
 
-# ÉTAPE 7 — Corrélation
+# ÉTAPE 7
 
 correlation_solde_depense = df['solde_cpp'].corr(df['montant_rgl'])
 
-# ÉTAPE 8 — Reporting (Synthèse)
+# ÉTAPE 8
 
 
 print("\n===== RAPPORT FINAL =====")
@@ -121,7 +118,7 @@ print("\nTop Caissiers:\n", performance_caissiers.head())
 
 print("\nCorrélation Solde_CPP vs Montant_Rgl:", correlation_solde_depense)
 
-# ÉTAPE 9 — Automatisation (fonction)
+# ÉTAPE 9 
 
 
 def run_system(file_path):
