@@ -1,12 +1,12 @@
 import pandas as pd
-
+import os
 # ÉTAPE 1
 
 df = pd.read_excel('aa.xlsx')
 
 df.columns = (
     df.columns.str.strip().str.lower()
-    .str.replace(" ", "_") 
+    .str.replace(" ", "_")
 
     .str.replace("é","e")
     .str.replace("è","e")
@@ -120,8 +120,14 @@ print("\nCorrélation Solde_CPP vs Montant_Rgl:", correlation_solde_depense)
 
 # ÉTAPE 9 
 
-
 def run_system(file_path):
+    if not os.path.exists(file_path):
+        print("❌ الملف غير موجود:", file_path)
+        return
+
+    df = pd.read_excel(file_path)
+    print("✅ تم تحميل الملف")
+    print(df.head())
     print("\nSystème analytique exécuté avec succès.")
 
-run_system('REGLEMENTS_CARTES_PREPAYEES_FAST_FOOD.xlsx')
+run_system("aa.xlsx")
